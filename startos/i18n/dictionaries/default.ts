@@ -21,10 +21,10 @@ const dict = {
   'The agent can run shell commands and has no login of its own — set a password before starting it': 25,
   // actions/connectModelServers.ts
   'Connect Model Servers': 30,
-  "Give the agent the models served by llama.cpp, vLLM, or Ollama on this server, with no address or key to type. Run it again after changing a server's model.": 31,
+  "Give the agent the models served by Strata, llama.cpp, vLLM, or Ollama on this server, with no address or key to type. Run it again after changing a server's model.": 31,
   'Model servers': 32,
   'Model servers installed on this server. Checking one adds its models to DeepSeek Harness; unchecking one removes them. A server must be running, with a model loaded, when you connect it.': 33,
-  'No supported model server is installed. Install llama.cpp, vLLM, or Ollama first.': 34,
+  'No supported model server is installed. Install Strata, llama.cpp, vLLM, or Ollama first.': 34,
   '${title} is not installed.': 35,
   '${title} has not published its API key yet. Start it once, then run this again.': 36,
   '${title} is not reachable. Start it, wait until it is ready, then run this again.': 37,
