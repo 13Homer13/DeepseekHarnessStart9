@@ -9,7 +9,7 @@
 > the upstream documentation is accurate and fully applicable — see the
 > Documentation section of `instructions.md` for links.
 
-DeepSeek Harness is DeepSeek's own coding agent: a chat interface over a model that can read, write and execute code in a workspace directory. This package runs its browser interface (`dsh web`, from the `@deepseek-ai/dsh` npm package) as a StartOS service, with the workspace and the conversation history on the server's own volume. Upstream's own sign-in assumes the browser runs on the same machine, so the package puts the interface behind the OS reverse proxy's basic-auth gate and signs the browser in to `dsh` behind it. That also makes the in-app **Settings → Models** page usable, which is where any model provider is added: DeepSeek, a catalog provider such as OpenAI or Anthropic, or any self-hosted OpenAI-compatible server. Model servers packaged for StartOS on the same box (llama.cpp, vLLM, Ollama) are wired in by the **Connect Model Servers** action instead, with no address or key to type, and become optional dependencies while connected.
+DeepSeek Harness is DeepSeek's own coding agent: a chat interface over a model that can read, write and execute code in a workspace directory. This package runs its browser interface (`dsh web`, from the `@deepseek-ai/dsh` npm package) as a StartOS service, with the workspace and the conversation history on the server's own volume. Upstream's own sign-in assumes the browser runs on the same machine, so the package puts the interface behind the OS reverse proxy's basic-auth gate and signs the browser in to `dsh` behind it. That also makes the in-app **Settings → Models** page usable, which is where any model provider is added: DeepSeek, a catalog provider such as OpenAI or Anthropic, or any self-hosted OpenAI-compatible server. Model servers packaged for StartOS on the same box (Strata, llama.cpp, vLLM, Ollama) are wired in by the **Connect Model Servers** action instead, with no address or key to type, and become optional dependencies while connected.
 
 - **Upstream repo:** <https://github.com/deepseek-ai/deepseek-harness>
 - **Wrapper repo:** <https://github.com/Start9-Community/DeepseekHarnessStart9>
@@ -80,13 +80,14 @@ One model, `store.json`, holding only what StartOS itself needs to know.
 
 ## Dependencies
 
-Three optional dependencies, each active only while **Connect Model Servers** has it connected (`enabled` reads `store.json` `backends`). They are model servers, not requirements: the service runs with none of them.
+Four optional dependencies, each active only while **Connect Model Servers** has it connected (`enabled` reads `store.json` `backends`). They are model servers, not requirements: the service runs with none of them.
 
-| Package     | Kind      | Health check | Version         | Dialed at (bridge)           | Key                                     |
-| ----------- | --------- | ------------ | --------------- | ---------------------------- | --------------------------------------- |
-| `llama-cpp` | `running` | `primary`    | ≥1.0.9994:1     | host `api-multi`, port 8080  | none on the bridge                      |
-| `vllm`      | `running` | `primary`    | ≥0.23.1-rc.0:13 | host `api-multi`, port 8000  | `vllm:public/credentials.json` `apiKey` |
-| `ollama`    | `running` | `primary`    | ≥0.31.2:2       | host `api-multi`, port 11434 | none                                    |
+| Package     | Kind      | Health check | Version         | Dialed at (bridge)           | Key                                       |
+| ----------- | --------- | ------------ | --------------- | ---------------------------- | ----------------------------------------- |
+| `strata`    | `running` | `primary`    | ≥0.1.41:0       | host `api`, port 8080        | `strata:public/credentials.json` `apiKey` |
+| `llama-cpp` | `running` | `primary`    | ≥1.0.9994:1     | host `api-multi`, port 8080  | none on the bridge                        |
+| `vllm`      | `running` | `primary`    | ≥0.23.1-rc.0:13 | host `api-multi`, port 8000  | `vllm:public/credentials.json` `apiKey`   |
+| `ollama`    | `running` | `primary`    | ≥0.31.2:2       | host `api-multi`, port 11434 | none                                      |
 
 Host ids and internal ports are imported from each package (`<id>-startos/startos/utils`), and `startos/backends.ts` is the one registry of them. Adding a server is one entry there plus its dependency description.
 
@@ -97,7 +98,7 @@ Host ids and internal ports are imported from each package (`<id>-startos/starto
 3. Each remaining server becomes a `dsh` provider route, `startos-<id>` (for example `startos-llama-cpp`), with display name "`<Title>` (StartOS)". Its `apiKeyEnv` names `STARTOS_<ID>_API_KEY`, which carries the key. A keyless server gets `no-key-required`, because `pi-ai`'s OpenAI-compatible client refuses an empty key.
 4. The routes travel to the container as JSON in `STARTOS_PROVIDERS`. Before `dsh` starts, the entrypoint runs `agent/startos-providers.mjs`, which writes them into the `llm-pi-ai` entry of `profiles/web/cordis.patch.yml`. It replaces every `startos-*` route and drops the ones no longer connected. It leaves the user's own providers, comments, and `!!js` expressions as they were, using the same YAML library and row lookup as `dsh`'s config editor. On a fresh install the profile does not exist yet, so the entrypoint first runs `dsh web --dump-config` to create it.
 
-Every route pins `compat` to `max_tokens`, a `system` role, and no `store` field, which all three servers accept. A model's context comes from the server (vLLM `max_model_len`, llama.cpp `/props` `n_ctx`), and its output cap is a quarter of that, at most 32K. Where none is reported (Ollama), the route falls back to 32K context and 8K output, not `pi-ai`'s 256K and 32K, which smaller servers refuse.
+Every route pins `compat` to `max_tokens`, a `system` role, and no `store` field, which all four servers accept. A model's context comes from the server (Strata `meta.n_ctx`, vLLM `max_model_len`, llama.cpp `/props` `n_ctx`), and its output cap is a quarter of that, at most 32K. Where none is reported (Ollama), the route falls back to 32K context and 8K output, not `pi-ai`'s 256K and 32K, which smaller servers refuse.
 
 The managed routes cannot live anywhere other than the user's patch. A `--patch` overlay on `llm-pi-ai` replaces that entry's whole config. That hides the user's providers and makes the Models page refuse every save ("overridden by a home patch or command-line overlay"). A second `dsh-llm-pi-ai` entry fails to load, because each instance claims every catalog provider.
 
@@ -135,7 +136,7 @@ Installing raises one task: **Set Web Interface Password**, `critical`, so the s
 
 ### Local models
 
-llama.cpp, vLLM, or Ollama on the same box: run **Connect Model Servers** while the server is running with a model loaded. Its models appear under "`<Title>` (StartOS)" in the model picker. See [Dependencies](#dependencies) for how.
+Strata, llama.cpp, vLLM, or Ollama on the same box: run **Connect Model Servers** while the server is running with a model loaded. Its models appear under "`<Title>` (StartOS)" in the model picker. See [Dependencies](#dependencies) for how.
 
 Any other OpenAI-compatible server is added in Settings → Models → **Add a custom provider**, with protocol **OpenAI Chat Completions**. The base URL must be reachable from inside this service's container:
 
@@ -164,11 +165,11 @@ Generates the credential the OS reverse proxy checks. Username is always `admin`
 
 ### Connect Model Servers
 
-Connects installed StartOS model servers (llama.cpp, vLLM, Ollama) to `dsh` as provider routes. See [Dependencies](#dependencies).
+Connects installed StartOS model servers (Strata, llama.cpp, vLLM, Ollama) to `dsh` as provider routes. See [Dependencies](#dependencies).
 
 - **Input** — a multiselect of the known servers that are installed, prefilled with the connected ones. It is disabled, with a message, when none is installed.
 - **What it does** — for each checked server it resolves the bridge address and key and reads `GET /v1/models` (plus `/props` for the context size), with a 10 s timeout. Then it replaces `store.json` `backends` with the result. Unchecked servers are dropped.
-- **Errors** — it writes nothing and names the server when a checked one isn't installed, hasn't published its key, doesn't answer (stopped or still starting), or lists no model.
+- **Errors** — it writes nothing and names the server when a checked one isn't installed, hasn't published its key, doesn't answer (stopped or still starting), or lists no model (Strata lists none until a model is loaded).
 - **Cost** — the daemon restarts, because `backends` changed.
 - **When to re-run** — after changing a server's model. The model list is the one fetched at the last run, so a model added later doesn't appear until then. Address and key changes heal without it.
 - **Outputs** — the connected servers and their model ids.
@@ -231,6 +232,7 @@ startos_managed_env_vars:
   - STARTOS_PROVIDERS # JSON of startos-* routes; unset before dsh starts
   - STARTOS_<ID>_API_KEY # one per connected model server
 dependencies: # all optional, enabled by connect-model-servers
+  - strata
   - llama-cpp
   - vllm
   - ollama

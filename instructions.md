@@ -22,8 +22,8 @@ want the interface reachable before you start using it.
   the agent writes, kept on your own disk and included in your backups.
 - **Your chat history**, also kept on the server and backed up.
 - **Your choice of model.** DeepSeek or another provider such as OpenAI or Anthropic, set up in the
-  app's **Settings → Models**. Or a model you run yourself on this server with **llama.cpp**,
-  **vLLM**, or **Ollama**, connected with one action.
+  app's **Settings → Models**. Or a model you run yourself on this server with **Strata**,
+  **llama.cpp**, **vLLM**, or **Ollama**, connected with one action.
 
 Model requests go from your server straight to the provider you chose. Nothing sits in between.
 
@@ -51,12 +51,12 @@ Conversations are saved too, so you can leave one and come back to it.
 
 ### Using a local model
 
-**llama.cpp, vLLM, or Ollama on this server:**
+**Strata, llama.cpp, vLLM, or Ollama on this server:**
 
 1. Start the model server and wait until its model has loaded.
 2. Run **Connect Model Servers**, tick the server, and submit. DeepSeek Harness restarts.
 3. In a conversation, open the model menu and pick a model under the server's name, for example
-   **llama.cpp (StartOS)**.
+   **Strata (StartOS)**.
 
 The server now also shows as a dependency of DeepSeek Harness, so StartOS tells you when it is
 stopped. If you change the server's model later, run **Connect Model Servers** again to update the
@@ -79,7 +79,7 @@ addresses can't be reached from inside DeepSeek Harness, so you get a "could not
 
 - **Set Web Interface Password** — generates a new password for the interface. Run it to rotate;
   the old one stops working straight away, and the new one takes effect without a restart.
-- **Connect Model Servers** — adds the models of llama.cpp, vLLM, or Ollama on this server to
+- **Connect Model Servers** — adds the models of Strata, llama.cpp, vLLM, or Ollama on this server to
   the model menu, or removes them when you untick a server. Run it again after changing a server's
   model.
 

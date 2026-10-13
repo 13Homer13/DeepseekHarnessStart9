@@ -9,6 +9,10 @@ import {
   apiHostId as ollamaHostId,
 } from 'ollama-startos/startos/utils'
 import {
+  apiHostId as strataHostId,
+  apiPort as strataPort,
+} from 'strata-startos/startos/utils'
+import {
   apiHostId as vllmHostId,
   apiPort as vllmPort,
 } from 'vllm-startos/startos/utils'
@@ -42,6 +46,16 @@ export type KnownBackend = {
 }
 
 export const KNOWN_BACKENDS: KnownBackend[] = [
+  {
+    id: 'strata',
+    title: 'Strata',
+    hostId: strataHostId,
+    internalPort: strataPort,
+    versionRange: '>=0.1.41:0',
+    healthCheck: 'primary',
+    keySource: 'public',
+    icon: 'https://raw.githubusercontent.com/13Homer13/strata-startos/master/icon.svg',
+  },
   {
     id: 'llama-cpp',
     title: 'llama.cpp',
@@ -178,8 +192,8 @@ const asCtx = (v: unknown) =>
 
 /**
  * The models a backend serves right now, from its `/v1/models`. Context sizes
- * come from the listing (vLLM's `max_model_len`) or else `/props` (llama.cpp's
- * running context); Ollama reports neither.
+ * come from the listing (Strata's `meta.n_ctx`, vLLM's `max_model_len`) or
+ * else `/props` (llama.cpp's running context); Ollama reports neither.
  */
 export async function discoverModels(
   baseUrl: string,
@@ -196,11 +210,12 @@ export async function discoverModels(
 
   const models: StoredModel[] = []
   for (const row of rows as Record<string, any>[]) {
-    if (typeof row?.id !== 'string') continue
+    // Strata lists each alias as a copy of its model; one entry is enough.
+    if (typeof row?.id !== 'string' || row.alias_of) continue
     const modalities = row.architecture?.input_modalities
     models.push({
       id: row.id,
-      contextWindow: asCtx(row.max_model_len),
+      contextWindow: asCtx(row.meta?.n_ctx) ?? asCtx(row.max_model_len),
       image: Array.isArray(modalities) && modalities.includes('image'),
     })
   }

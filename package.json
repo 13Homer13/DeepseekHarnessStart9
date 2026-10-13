@@ -4,6 +4,7 @@
     "@start9labs/start-sdk": "3.0.3",
     "llama-cpp-startos": "github:Start9Labs/llama-cpp-startos#next",
     "ollama-startos": "github:Start9Labs/ollama-startos#next",
+    "strata-startos": "github:13Homer13/strata-startos#master",
     "vllm-startos": "github:Start9Labs/vllm-startos#next"
   },
   "overrides": {
