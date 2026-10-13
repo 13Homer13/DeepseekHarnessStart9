@@ -6,20 +6,8 @@ const dict = {
   'Web Interface': 1,
   'The web interface is not responding yet': 2,
   'The web interface is ready': 3,
-  'DeepSeek API': 4,
-  'No API key set. Run the Set DeepSeek API Key action, or add one from the web interface.': 5,
-  'Could not reach api.deepseek.com': 6,
-  'The DeepSeek API accepted your key': 7,
-  'Your DeepSeek account is out of credit. Top it up at platform.deepseek.com and the agent recovers on its own.': 8,
-  'The DeepSeek API rejected the request: ${detail}': 9,
   // interfaces.ts
   'The DeepSeek Harness agent — chat, workspace files, and its shell': 10,
-  // actions/setApiKey.ts
-  'Set DeepSeek API Key': 11,
-  'Store the key the agent uses to talk to DeepSeek': 12,
-  'DeepSeek API Key': 13,
-  'Your key from platform.deepseek.com. It is stored on this server and sent only to the DeepSeek API.': 14,
-  'A DeepSeek API key, starting with sk-': 15,
   // actions/setPassword.ts
   'Set Web Interface Password': 16,
   'Reset Web Interface Password': 17,
@@ -29,10 +17,22 @@ const dict = {
   'Save the password now — it is not shown again. Anyone who has it can run commands on this server through the agent.': 21,
   Username: 22,
   Password: 23,
-  // init/taskApiKey.ts
-  'The agent needs a DeepSeek API key before it can answer anything.': 24,
   // init/watchPassword.ts
   'The agent can run shell commands and has no login of its own — set a password before starting it': 25,
+  // actions/connectModelServers.ts
+  'Connect Model Servers': 30,
+  "Give the agent the models served by llama.cpp, vLLM, or Ollama on this server, with no address or key to type. Run it again after changing a server's model.": 31,
+  'Model servers': 32,
+  'Model servers installed on this server. Checking one adds its models to DeepSeek Harness; unchecking one removes them. A server must be running, with a model loaded, when you connect it.': 33,
+  'No supported model server is installed. Install llama.cpp, vLLM, or Ollama first.': 34,
+  '${title} is not installed.': 35,
+  '${title} has not published its API key yet. Start it once, then run this again.': 36,
+  '${title} is not reachable. Start it, wait until it is ready, then run this again.': 37,
+  '${title} is not serving a model yet. Set one up in ${title}, then run this again.': 38,
+  'Model Servers Disconnected': 39,
+  'DeepSeek Harness no longer uses a model server on this server.': 40,
+  'Model Servers Connected': 41,
+  "DeepSeek Harness restarts to apply this. Then pick a model under ${providers} in the model picker. Run this again after you change a server's model.": 42,
 } as const
 
 /**
