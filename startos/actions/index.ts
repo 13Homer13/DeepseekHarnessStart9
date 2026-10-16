@@ -1,7 +1,7 @@
 import { sdk } from '../sdk'
-import { setApiKey } from './setApiKey'
+import { connectModelServers } from './connectModelServers'
 import { setPassword } from './setPassword'
 
 export const actions = sdk.Actions.of()
   .addAction(setPassword)
-  .addAction(setApiKey)
+  .addAction(connectModelServers)

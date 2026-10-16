@@ -34,10 +34,19 @@ verified, tried, and decided belongs in the commit message and the PR body.
 
 ## This repo
 
-- **Don't hardcode the two platform binaries' versions in the `Dockerfile`.** They are read from
-  each parent package's `optionalDependencies` at build time, so a `dsh` bump can't pair the wrong
-  binary with the resolver that looks for it.
-- **Keep `agent/web-proxy.js` header-transparent; never rewrite `Host` to the loopback authority.**
-  It also "works", and silently disables `dsh`'s `Host` fence on `/api`.
+- **Don't unpack or pin `dsh`'s native platform packages by hand in the `Dockerfile`.** Since 0.2
+  `npm install -g` brings them; the build only asserts each one loads.
+- **Don't drop the relay's token redirect, cookie `SameSite=Lax` rewrite, or `ownsHost` injection.**
+  Without them the interface stops at "authentication required", loops when opened from the StartOS
+  dashboard, or shows a Models page that can't save, which was the old DeepSeek-only bug. The launch
+  token must never reach the logs or `/data`.
+- **Keep `HOME` pointed at `/data/projects` in the entrypoint.** dsh's workspace picker opens on
+  `$HOME`, and `/root` is lost on every rebuild.
+- **Never rewrite `Host` (or `Origin`) in `agent/web-proxy.js`.** Pointing it at loopback also
+  "works", and silently disables `dsh`'s `Host` fence on `/api`. The relay's only header edits are
+  dropping `accept-encoding` on page requests and the auth cookie's `SameSite`.
 - **Never expose the interface without the `addSsl.auth` gate in `interfaces.ts`.** `dsh` has no
   login of its own, and the gate covers the TLS addresses only.
+- **Keep the `startos-*` provider routes in the user's `cordis.patch.yml`; don't move them to a
+  `--patch` overlay or a second `dsh-llm-pi-ai` entry.** The overlay locks the Models page and the
+  second entry fails to load (README, Dependencies).
