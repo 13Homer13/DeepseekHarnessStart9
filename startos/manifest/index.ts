@@ -11,7 +11,7 @@ export const manifest = setupManifest({
   donationUrl:
     'https://www.paypal.com/paypalme/pfont?locale.x=ca_ES&email=paufont%40gmail.com',
   description: { short, long },
-  volumes: ['main'],
+  volumes: ['main', 'startos'],
   images: {
     main: {
       source: {
