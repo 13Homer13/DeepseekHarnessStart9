@@ -82,11 +82,11 @@ One model, `store.json`, holding only what StartOS itself needs to know.
 
 Three optional dependencies, each active only while **Connect Model Servers** has it connected (`enabled` reads `store.json` `backends`). They are model servers, not requirements: the service runs with none of them.
 
-| Package     | Kind      | Health check | Version         | Dialed at (bridge)           | Key                                     |
-| ----------- | --------- | ------------ | --------------- | ---------------------------- | --------------------------------------- |
-| `llama-cpp` | `running` | `primary`    | ≥1.0.9994:1     | host `api-multi`, port 8080  | none on the bridge                      |
-| `vllm`      | `running` | `primary`    | ≥0.23.1-rc.0:13 | host `api-multi`, port 8000  | `vllm:public/credentials.json` `apiKey` |
-| `ollama`    | `running` | `primary`    | ≥0.31.2:2       | host `api-multi`, port 11434 | none                                    |
+| Package     | Kind      | Health check | Version         | Dialed at (bridge)           | Key                                          |
+| ----------- | --------- | ------------ | --------------- | ---------------------------- | -------------------------------------------- |
+| `llama-cpp` | `running` | `primary`    | ≥11960:1        | host `api-key`, port 8080    | `llama-cpp:public/credentials.json` `apiKey` |
+| `vllm`      | `running` | `primary`    | ≥0.23.1-rc.0:13 | host `api-multi`, port 8000  | `vllm:public/credentials.json` `apiKey`      |
+| `ollama`    | `running` | `primary`    | ≥0.31.2:2       | host `api-multi`, port 11434 | none                                         |
 
 Host ids and internal ports are imported from each package (`<id>-startos/startos/utils`), and `startos/backends.ts` is the one registry of them. Adding a server is one entry there plus its dependency description.
 
