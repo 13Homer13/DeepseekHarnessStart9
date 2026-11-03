@@ -23,7 +23,9 @@ cd "$PROJECTS_DIR" || { echo "[webui] cannot cd into $PROJECTS_DIR"; exit 1; }
 # Model servers connected with the Connect Model Servers action become dsh
 # provider routes (startos-*) in the profile patch the Models page edits. The
 # profile is created on dsh's first boot; --dump-config creates it without
-# serving. The routes carry no keys: those arrive as STARTOS_*_API_KEY env.
+# serving. The routes carry no keys: those arrive as STARTOS_*_API_KEY env,
+# and a copy of one saved in the app's credentials file is deleted, because
+# dsh would prefer it to the env.
 # dsh resolves its home from $DSH_HOME and falls back to ~/.dsh, so the default
 # has to be exported too: without it dsh would write the profile under $HOME
 # while this script looked for it in /data/dsh, and every route would be lost
@@ -32,7 +34,7 @@ DSH_HOME="${DSH_HOME:-/data/dsh}"
 export DSH_HOME
 PATCH_FILE="$DSH_HOME/profiles/web/cordis.patch.yml"
 [ -f "$PATCH_FILE" ] || dsh web --dump-config > /dev/null 2>&1
-node /app/startos-providers.mjs "$PATCH_FILE" \
+node /app/startos-providers.mjs "$PATCH_FILE" "$DSH_HOME/.credentials.yaml" \
   || echo "[webui] could not add the StartOS model servers to dsh's providers"
 unset STARTOS_PROVIDERS
 

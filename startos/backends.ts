@@ -1,7 +1,7 @@
 import * as fs from 'node:fs/promises'
 import { FileHelper, T, z } from '@start9labs/start-sdk'
 import {
-  apiHostId as llamaCppHostId,
+  apiKeyHostId as llamaCppHostId,
   apiPort as llamaCppPort,
 } from 'llama-cpp-startos/startos/utils'
 import {
@@ -47,11 +47,10 @@ export const KNOWN_BACKENDS: KnownBackend[] = [
     title: 'llama.cpp',
     hostId: llamaCppHostId,
     internalPort: llamaCppPort,
-    // The keyless release: the API key moved to the StartOS proxy, so the
-    // bridge address needs none.
-    versionRange: '>=1.0.9994:1',
+    // The first release with the Bearer-gated API host and a published key.
+    versionRange: '>=11960:1',
     healthCheck: 'primary',
-    keySource: 'none',
+    keySource: 'public',
     icon: 'https://raw.githubusercontent.com/Start9Labs/llama-cpp-startos/master/icon.png',
   },
   {

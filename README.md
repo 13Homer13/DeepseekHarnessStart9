@@ -82,11 +82,11 @@ One model, `store.json`, holding only what StartOS itself needs to know.
 
 Three optional dependencies, each active only while **Connect Model Servers** has it connected (`enabled` reads `store.json` `backends`). They are model servers, not requirements: the service runs with none of them.
 
-| Package     | Kind      | Health check | Version         | Dialed at (bridge)           | Key                                     |
-| ----------- | --------- | ------------ | --------------- | ---------------------------- | --------------------------------------- |
-| `llama-cpp` | `running` | `primary`    | ≥1.0.9994:1     | host `api-multi`, port 8080  | none on the bridge                      |
-| `vllm`      | `running` | `primary`    | ≥0.23.1-rc.0:13 | host `api-multi`, port 8000  | `vllm:public/credentials.json` `apiKey` |
-| `ollama`    | `running` | `primary`    | ≥0.31.2:2       | host `api-multi`, port 11434 | none                                    |
+| Package     | Kind      | Health check | Version         | Dialed at (bridge)           | Key                                          |
+| ----------- | --------- | ------------ | --------------- | ---------------------------- | -------------------------------------------- |
+| `llama-cpp` | `running` | `primary`    | ≥11960:1        | host `api-key`, port 8080    | `llama-cpp:public/credentials.json` `apiKey` |
+| `vllm`      | `running` | `primary`    | ≥0.23.1-rc.0:13 | host `api-multi`, port 8000  | `vllm:public/credentials.json` `apiKey`      |
+| `ollama`    | `running` | `primary`    | ≥0.31.2:2       | host `api-multi`, port 11434 | none                                         |
 
 Host ids and internal ports are imported from each package (`<id>-startos/startos/utils`), and `startos/backends.ts` is the one registry of them. Adding a server is one entry there plus its dependency description.
 
@@ -95,7 +95,7 @@ Host ids and internal ports are imported from each package (`<id>-startos/starto
 1. `setupMain` resolves each server's bridge address with `sdk.host.getBridgeAddress(...).const()` (`http://10.0.3.1:<assigned port>/v1`). For a keyed server it bind-mounts that server's `public` volume read-only under the `startos` volume and reads `credentials.json` with `.const()`. So an install, an uninstall, a port change, or a key rotation restarts the daemon once, and it heals.
 2. A server that is uninstalled, or has published no key yet, is left out entirely: no route and no env var.
 3. Each remaining server becomes a `dsh` provider route, `startos-<id>` (for example `startos-llama-cpp`), with display name "`<Title>` (StartOS)". Its `apiKeyEnv` names `STARTOS_<ID>_API_KEY`, which carries the key. A keyless server gets `no-key-required`, because `pi-ai`'s OpenAI-compatible client refuses an empty key.
-4. The routes travel to the container as JSON in `STARTOS_PROVIDERS`. Before `dsh` starts, the entrypoint runs `agent/startos-providers.mjs`, which writes them into the `llm-pi-ai` entry of `profiles/web/cordis.patch.yml`. It replaces every `startos-*` route and drops the ones no longer connected. It leaves the user's own providers, comments, and `!!js` expressions as they were, using the same YAML library and row lookup as `dsh`'s config editor. On a fresh install the profile does not exist yet, so the entrypoint first runs `dsh web --dump-config` to create it.
+4. The routes travel to the container as JSON in `STARTOS_PROVIDERS`. Before `dsh` starts, the entrypoint runs `agent/startos-providers.mjs`, which writes them into the `llm-pi-ai` entry of `profiles/web/cordis.patch.yml`. It replaces every `startos-*` route and drops the ones no longer connected. It leaves the user's own providers, comments, and `!!js` expressions as they were, using the same YAML library and row lookup as `dsh`'s config editor. On a fresh install the profile does not exist yet, so the entrypoint first runs `dsh web --dump-config` to create it. The same script deletes every `STARTOS_*_API_KEY` ref from `/data/dsh/.credentials.yaml`, keeping comments and every other key, and leaving the file at mode 600. The Models page saves a key typed into a "(StartOS)" provider's card under that route's `apiKeyEnv`, and `dsh` resolves its credential file before the process environment. So a stale key typed there would override the injected one on every start, and chats would fail with "API key invalid" (`pi-ai` reports a 401 as an auth error). The log line `removed keys saved in the app for StartOS model servers` names the refs it deleted, never their values. A key typed while `dsh` runs takes effect immediately, because `dsh` watches the file, and it lasts until the next start.
 
 Every route pins `compat` to `max_tokens`, a `system` role, and no `store` field, which all three servers accept. A model's context comes from the server (vLLM `max_model_len`, llama.cpp `/props` `n_ctx`), and its output cap is a quarter of that, at most 32K. Where none is reported (Ollama), the route falls back to 32K context and 8K output, not `pi-ai`'s 256K and 32K, which smaller servers refuse.
 

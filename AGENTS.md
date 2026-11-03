@@ -46,7 +46,7 @@ verified, tried, and decided belongs in the commit message and the PR body.
   "works", and silently disables `dsh`'s `Host` fence on `/api`. The relay's only header edits are
   dropping `accept-encoding` on page requests and the auth cookie's `SameSite`.
 - **Never expose the interface without the `addSsl.auth` gate in `interfaces.ts`.** `dsh` has no
-  login of its own, and the gate covers the TLS addresses only.
+  login of its own.
 - **Keep the `startos-*` provider routes in the user's `cordis.patch.yml`; don't move them to a
   `--patch` overlay or a second `dsh-llm-pi-ai` entry.** The overlay locks the Models page and the
   second entry fails to load (README, Dependencies).

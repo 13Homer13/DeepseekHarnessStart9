@@ -85,7 +85,8 @@ addresses can't be reached from inside DeepSeek Harness, so you get a "could not
 
 Other model providers and their keys are managed in the app, under **Settings → Models**. The
 providers named "(StartOS)" belong to **Connect Model Servers**: changes you make to them in the app
-are undone the next time the service starts.
+are undone the next time the service starts. Leave their API key field blank. StartOS supplies the
+key, and a key typed there is removed on the next start.
 
 ## Limitations
 

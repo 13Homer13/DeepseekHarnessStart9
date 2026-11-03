@@ -5,16 +5,71 @@
 // user's, saved by the Models page, and is left untouched — as are comments
 // and `!!js` expressions, the way dsh's own config editor keeps them.
 //
-// Usage: node startos-providers.mjs <path to cordis.patch.yml>
-import { readFileSync, renameSync, writeFileSync } from 'node:fs'
-import { isMap, isSeq, parseDocument } from 'yaml'
+// It also deletes STARTOS_*_API_KEY refs from dsh's credentials file. A key
+// typed into a "(StartOS)" provider card in Settings → Models is saved there
+// under the route's apiKeyEnv, and dsh resolves that file before the process
+// environment, so a stale copy would shadow the key main.ts injects forever.
+//
+// Usage: node startos-providers.mjs <path to cordis.patch.yml> [<path to .credentials.yaml>]
+import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs'
+import { isMap, isScalar, isSeq, parseDocument } from 'yaml'
 
 const ENTRY_ID = 'llm-pi-ai'
 const ENTRY_NAME = '@deepseek-ai/dsh-llm-pi-ai'
 const PREFIX = 'startos-'
 
 const path = process.argv[2]
+const credentialsPath = process.argv[3]
 const wanted = JSON.parse(process.env.STARTOS_PROVIDERS || '{}')
+
+// The env names main.ts injects (backends.ts apiKeyEnv).
+const STARTOS_KEY_REF = /^STARTOS_[A-Z0-9_]+_API_KEY$/
+
+function dropStartosKeyRefs(file) {
+  if (!existsSync(file)) return []
+  const text = readFileSync(file, 'utf8')
+  const creds = parseDocument(text, { intAsBigInt: true })
+  // Never quote the parser's message: it embeds the offending line, a secret.
+  if (creds.errors.length) throw new Error(`${file} is not valid YAML`)
+  if (!isMap(creds.contents)) return []
+  // dsh's layout nests refs under `refs:`; the pre-release flat layout (no
+  // `version`) keeps them at the top, and dsh migrates it on its next boot.
+  const section = creds.contents.has('version')
+    ? creds.get('refs', true)
+    : creds.contents
+  if (!isMap(section)) return []
+  const dropped = section.items
+    .map((pair) => (isScalar(pair.key) ? pair.key.value : undefined))
+    .filter((key) => typeof key === 'string' && STARTOS_KEY_REF.test(key))
+  if (!dropped.length) return []
+  // As dsh's own delete does: a comment above the first entry belongs to it.
+  if (
+    isScalar(section.items[0].key) &&
+    dropped.includes(section.items[0].key.value)
+  ) {
+    section.commentBefore = null
+  }
+  for (const key of dropped) section.delete(key)
+  // dsh refuses a credentials file other users can read: keep it at 0600.
+  writeFileSync(`${file}.startos-tmp`, String(creds), { mode: 0o600 })
+  renameSync(`${file}.startos-tmp`, file)
+  return dropped
+}
+
+if (credentialsPath) {
+  try {
+    const dropped = dropStartosKeyRefs(credentialsPath)
+    if (dropped.length) {
+      console.log(
+        `[startos-providers] removed keys saved in the app for StartOS model servers (StartOS supplies them): ${dropped.join(', ')}`,
+      )
+    }
+  } catch (error) {
+    console.warn(
+      `[startos-providers] could not clear StartOS model-server keys from ${credentialsPath}: ${error.message}`,
+    )
+  }
+}
 
 const before = readFileSync(path, 'utf8')
 const doc = parseDocument(before, {
