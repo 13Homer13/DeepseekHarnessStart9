@@ -88,6 +88,9 @@ providers named "(StartOS)" belong to **Connect Model Servers**: changes you mak
 are undone the next time the service starts. Leave their API key field blank. StartOS supplies the
 key, and a key typed there is removed on the next start.
 
+Session logs are not uploaded to DeepSeek unless you turn on **Upload Session Log when using the
+official model API** in **Settings → General**. The setting only applies to DeepSeek's own API.
+
 ## Limitations
 
 - **Choose the HTTPS address.** The password is checked by StartOS on the encrypted addresses. If you

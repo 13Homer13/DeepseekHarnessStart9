@@ -101,6 +101,10 @@ Every route pins `compat` to `max_tokens`, a `system` role, and no `store` field
 
 The managed routes cannot live anywhere other than the user's patch. A `--patch` overlay on `llm-pi-ai` replaces that entry's whole config. That hides the user's providers and makes the Models page refuse every save ("overridden by a home patch or command-line overlay"). A second `dsh-llm-pi-ai` entry fails to load, because each instance claims every catalog provider.
 
+## Session Log Upload
+
+`dsh` can attach session logs to requests it sends to the official DeepSeek API (the `dsh_session_log` field, from the `session-log-deepseek` plugin, on by default upstream). This package turns it off: before `dsh` starts, `agent/startos-providers.mjs` writes `enabled: false` to that plugin's row in `cordis.patch.yml` when the row has no `enabled` key. The **Upload Session Log when using the official model API** switch in **Settings → General** writes the same key, so a user's choice stays in place across restarts and updates. It has no effect on requests to other providers.
+
 ## Network Access and Interfaces
 
 One interface, serving the agent's browser UI behind an authentication gate.
