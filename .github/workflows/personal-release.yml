@@ -1,0 +1,18 @@
+name: Personal Release
+
+# Builds this branch and publishes it to h0mer's own registry. Lives only on
+# personal/strata. The strata-v prefix keeps community v* tags from matching.
+on:
+  push:
+    tags:
+      - 'strata-v*'
+
+jobs:
+  release:
+    uses: Start9Labs/start-technologies/.github/workflows/release.yml@master
+    with:
+      RELEASE_REGISTRY: https://registry.start9.pl
+    secrets:
+      DEV_KEY: ${{ secrets.DEV_KEY }}
+    permissions:
+      contents: write
