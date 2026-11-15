@@ -4,6 +4,18 @@ import { storeJson } from './fileModels/store.json'
 import { sdk } from './sdk'
 
 const descriptions: Record<string, T.LocaleString> = {
+  strata: {
+    en_US:
+      'Optional: a local model on your NVIDIA GPU through Strata. Connect it with the Connect Model Servers action.',
+    es_ES:
+      'Opcional: un modelo local en tu GPU NVIDIA a través de Strata. Conéctalo con la acción Conectar servidores de modelos.',
+    de_DE:
+      'Optional: ein lokales Modell auf deiner NVIDIA-GPU über Strata. Verbinde es mit der Aktion „Modellserver verbinden“.',
+    pl_PL:
+      'Opcjonalnie: lokalny model na Twojej karcie NVIDIA przez Strata. Połącz go akcją Połącz serwery modeli.',
+    fr_FR:
+      'Optionnel : un modèle local sur votre GPU NVIDIA via Strata. Connectez-le avec l’action Connecter des serveurs de modèles.',
+  },
   'llama-cpp': {
     en_US:
       'Optional: local GGUF models through llama.cpp. Connect it with the Connect Model Servers action.',
@@ -58,6 +70,7 @@ const backend = <const Id extends string>(id: Id) => {
 }
 
 export const dependencies = sdk.Dependencies.of()
+  .addDependency(backend('strata'))
   .addDependency(backend('llama-cpp'))
   .addDependency(backend('vllm'))
   .addDependency(backend('ollama'))

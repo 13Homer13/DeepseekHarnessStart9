@@ -28,7 +28,7 @@ const inputSpec = InputSpec.of({
       disabled: installed.length
         ? false
         : i18n(
-            'No supported model server is installed. Install llama.cpp, vLLM, or Ollama first.',
+            'No supported model server is installed. Install Strata, llama.cpp, vLLM, or Ollama first.',
           ),
     }
   }),
@@ -40,7 +40,7 @@ export const connectModelServers = sdk.Action.withInput(
   {
     name: i18n('Connect Model Servers'),
     description: i18n(
-      "Give the agent the models served by llama.cpp, vLLM, or Ollama on this server, with no address or key to type. Run it again after changing a server's model.",
+      "Give the agent the models served by Strata, llama.cpp, vLLM, or Ollama on this server, with no address or key to type. Run it again after changing a server's model.",
     ),
     warning: null,
     allowedStatuses: 'any',
@@ -70,7 +70,7 @@ export const connectModelServers = sdk.Action.withInput(
       if (!key) {
         throw new Error(
           i18n(
-            '${title} has not published its API key yet. Start it once, then run this again.',
+            '${title} has not published its API key yet. Start it, run its API Key action if it has one, then run this again.',
             { title },
           ),
         )
