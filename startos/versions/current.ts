@@ -1,18 +1,18 @@
 import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '0.2.2-rc.1:0',
+  version: '0.2.2-rc.3:0',
   releaseNotes: {
     en_US:
-      'Updates DeepSeek Harness to 0.2.2-rc.1. Phones and tablets are much better supported, chat text can be quoted into the input box, conversations can be copied as Markdown, and file previews gain a folder tree. The interface also adds Japanese, Spanish, French, German, Russian and Brazilian Portuguese. Requires StartOS 0.4.1 or later. Session logs are no longer uploaded to DeepSeek unless you turn this on in Settings.',
+      'Updates DeepSeek Harness to 0.2.2-rc.3. Code review in Git worktrees, named and nested subagents, retry settings for failed model requests, saved API keys shown masked, and an experimental importer for past DeepSeek App or web conversations. Connect Model Servers can now connect Strata. Requires StartOS 0.4.2 or later.',
     es_ES:
-      'Actualiza DeepSeek Harness a 0.2.2-rc.1. Mejora mucho el soporte para móviles y tabletas, el texto del chat se puede citar en el cuadro de entrada, las conversaciones se pueden copiar como Markdown y la vista previa de archivos incorpora un árbol de carpetas. La interfaz añade además japonés, español, francés, alemán, ruso y portugués de Brasil. Requiere StartOS 0.4.1 o posterior. Los registros de sesión ya no se envían a DeepSeek a menos que lo actives en Ajustes.',
+      'Actualiza DeepSeek Harness a 0.2.2-rc.3. Revisión de código en worktrees de Git, subagentes con nombre y anidados, ajustes de reintento para solicitudes fallidas al modelo, claves API guardadas mostradas enmascaradas y un importador experimental de conversaciones anteriores de la app o la web de DeepSeek. Conectar servidores de modelos ahora puede conectar Strata. Requiere StartOS 0.4.2 o posterior.',
     de_DE:
-      'Aktualisiert DeepSeek Harness auf 0.2.2-rc.1. Smartphones und Tablets werden deutlich besser unterstützt, Chat-Text lässt sich als Zitat ins Eingabefeld übernehmen, Unterhaltungen lassen sich als Markdown kopieren, und die Dateivorschau erhält einen Ordnerbaum. Die Oberfläche ist außerdem auf Japanisch, Spanisch, Französisch, Deutsch, Russisch und brasilianischem Portugiesisch verfügbar. Erfordert StartOS 0.4.1 oder neuer. Sitzungsprotokolle werden nicht mehr an DeepSeek hochgeladen, es sei denn, du aktivierst dies in den Einstellungen.',
+      'Aktualisiert DeepSeek Harness auf 0.2.2-rc.3. Code-Review in Git-Worktrees, benannte und verschachtelte Subagenten, Wiederholungseinstellungen für fehlgeschlagene Modellanfragen, gespeicherte API-Schlüssel werden maskiert angezeigt, und ein experimenteller Import früherer Unterhaltungen aus der DeepSeek-App oder -Web. „Modellserver verbinden“ kann jetzt Strata verbinden. Erfordert StartOS 0.4.2 oder neuer.',
     pl_PL:
-      'Aktualizuje DeepSeek Harness do wersji 0.2.2-rc.1. Znacznie lepsza obsługa telefonów i tabletów, tekst z czatu można cytować w polu wprowadzania, rozmowy można kopiować jako Markdown, a podgląd plików zyskuje drzewo folderów. Interfejs jest teraz dostępny także po japońsku, hiszpańsku, francusku, niemiecku, rosyjsku i w brazylijskiej odmianie portugalskiego. Wymaga StartOS 0.4.1 lub nowszego. Logi sesji nie są już przesyłane do DeepSeek, chyba że włączysz to w Ustawieniach.',
+      'Aktualizuje DeepSeek Harness do wersji 0.2.2-rc.3. Przegląd kodu w worktree Git, nazwane i zagnieżdżone subagenty, ustawienia ponawiania nieudanych żądań do modelu, zapisane klucze API wyświetlane w formie zamaskowanej oraz eksperymentalny import wcześniejszych rozmów z aplikacji lub wersji webowej DeepSeek. Połącz serwery modeli może teraz połączyć Strata. Wymaga StartOS 0.4.2 lub nowszego.',
     fr_FR:
-      "Met à jour DeepSeek Harness vers 0.2.2-rc.1. Les téléphones et tablettes sont bien mieux pris en charge, le texte du chat peut être cité dans la zone de saisie, les conversations peuvent être copiées en Markdown et l'aperçu des fichiers gagne une arborescence de dossiers. L'interface ajoute aussi le japonais, l'espagnol, le français, l'allemand, le russe et le portugais du Brésil. Nécessite StartOS 0.4.1 ou ultérieur. Les journaux de session ne sont plus envoyés à DeepSeek, sauf si vous activez cette option dans les Paramètres.",
+      'Met à jour DeepSeek Harness vers 0.2.2-rc.3. Revue de code dans les worktrees Git, sous-agents nommés et imbriqués, réglages de nouvelle tentative pour les requêtes au modèle qui échouent, clés API enregistrées affichées masquées, et un import expérimental des anciennes conversations de l’app ou du web DeepSeek. Connecter des serveurs de modèles peut désormais connecter Strata. Nécessite StartOS 0.4.2 ou ultérieur.',
   },
   migrations: {
     up: async ({ effects }) => {},

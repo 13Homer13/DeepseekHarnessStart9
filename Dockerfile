@@ -1,4 +1,4 @@
-FROM node:22-slim
+FROM node:24-slim
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates bubblewrap \
@@ -9,7 +9,7 @@ RUN apt-get update \
 # tools, and sharp for image input. Fail the build if any is missing rather
 # than ship an agent whose tools break at first use.
 RUN set -eux; \
-    npm install -g @deepseek-ai/dsh@0.2.2-rc.1; \
+    npm install -g @deepseek-ai/dsh@0.2.2-rc.3; \
     cd "$(npm root -g)/@deepseek-ai/dsh/node_modules"; \
     node --input-type=module -e "await import('@deepseek-ai/node-addon-system/landlock-run'); await import('@deepseek-ai/node-addon-system/flock')"; \
     node -e "require('sharp')"; \
